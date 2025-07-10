@@ -14,7 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest
 @SpringBootTest
 class UserServiceTest(
     @Autowired private val userRepository: UserRepository,
-    @Autowired private val userService: UserService
+    @Autowired private val userService: UserService,
 ) {
 
     // Spring Context 를 공유하므로
@@ -35,11 +35,10 @@ class UserServiceTest(
 
         // then
         val results = userRepository.findAll()
-        println("results[0] = ${results[0]}")
         assertThat(results.size).isEqualTo(1)
         assertThat(results[0].name).isEqualTo(request.name)
-//        val age: Int? = results[0].age
-//        assertThat(age).isNull()
+        //        val age: Int? = results[0].age
+        //        assertThat(age).isNull()
         assertThat(results[0].age).isNull()
     }
 
@@ -47,10 +46,12 @@ class UserServiceTest(
     @DisplayName("유저 조회가 정상 동작한다")
     fun getUsersTest() {
         // given
-        userRepository.saveAll(listOf(
-            User("A", 20),
-            User("B", null),
-        ))
+        userRepository.saveAll(
+            listOf(
+                User("A", 20),
+                User("B", null),
+            )
+        )
 
         // when
         val results = userService.getUsers()
@@ -67,7 +68,7 @@ class UserServiceTest(
     fun updateUserNameTest() {
         // given
         val savedUser = userRepository.save(User("A", null))
-        val userUpdateRequest = UserUpdateRequest(savedUser.id, "B")
+        val userUpdateRequest = UserUpdateRequest(savedUser.id!!, "B")
 
         // when
         userService.updateUserName(userUpdateRequest)
@@ -87,8 +88,8 @@ class UserServiceTest(
         userService.deleteUser("A")
 
         // then
-//        val results = userRepository.findAll()
-//        assertThat(results.size).isEqualTo(0)
+        //        val results = userRepository.findAll()
+        //        assertThat(results.size).isEqualTo(0)
         assertThat(userRepository.findAll()).isEmpty()
     }
 }

@@ -1,6 +1,6 @@
 package com.group.libraryapp.service.book
 
-import com.group.libraryapp.domain.book.JavaBook
+import com.group.libraryapp.domain.book.Book
 import com.group.libraryapp.domain.book.BookRepository
 import com.group.libraryapp.domain.user.User
 import com.group.libraryapp.domain.user.UserRepository
@@ -16,9 +16,10 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.transaction.annotation.Transactional
 
 @SpringBootTest
-class BookServiceTest @Autowired constructor(
+open class BookServiceTest @Autowired constructor(
     private val bookService: BookService,
     private val bookRepository: BookRepository,
     private val userRepository: UserRepository,
@@ -48,9 +49,10 @@ class BookServiceTest @Autowired constructor(
 
     @Test
     @DisplayName("책 대출이 정상 동작한다")
-    fun loanBookTest() {
+    @Transactional
+    open fun loanBookTest() {
         // given
-        val book = JavaBook("이상한 나라의 엘리스")
+        val book = Book("이상한 나라의 엘리스")
         val user = User("임채동", 30)
         val request = BookLoanRequest("임채동", book.name)
 
@@ -75,7 +77,7 @@ class BookServiceTest @Autowired constructor(
     @DisplayName("책이 진작 대출되어 있다면, 신규 대출이 실패한다")
     fun loanBookFailTest() {
         // given
-        val book = JavaBook("이상한 나라의 엘리스")
+        val book = Book("이상한 나라의 엘리스")
         val user = User("임채동", 30)
         val request = BookLoanRequest("임채동", book.name)
 
@@ -92,17 +94,17 @@ class BookServiceTest @Autowired constructor(
 
     @Test
     @DisplayName("책 반납이 정상 동작한다")
-    fun returnBookTest() {
+    open fun returnBookTest() {
         // given
-        val book = JavaBook("이상한 나라의 엘리스")
+        val book = Book("이상한 나라의 엘리스")
         val user = User("임채동", 30)
 
-        bookRepository.save(book)
+        val savedBook = bookRepository.save(book)
         val savedUser = userRepository.save(user)
-        userLoanHistoryRepository.save(UserLoanHistory(savedUser, book.name, false))
+        userLoanHistoryRepository.save(UserLoanHistory(savedUser, savedBook.name, false))
 
-        val bookReturnRequest = BookReturnRequest("임채동", "이상한 나라의 엘리스")
-
+        val bookReturnRequest = BookReturnRequest(savedUser.name, savedBook.name)
+        println("bookReturnRequest = ${bookReturnRequest}")
         // when
         bookService.returnBook(bookReturnRequest)
 

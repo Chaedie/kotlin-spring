@@ -2,7 +2,7 @@ package com.group.libraryapp.dto.user.response
 
 import com.group.libraryapp.domain.user.User
 
-class UserResponse(
+data class UserResponse(
     val id: Long,
     val name: String,
     val age: Int?,

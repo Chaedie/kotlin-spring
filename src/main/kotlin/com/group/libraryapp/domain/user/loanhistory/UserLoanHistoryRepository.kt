@@ -8,4 +8,6 @@ interface UserLoanHistoryRepository : JpaRepository<UserLoanHistory, Long> {
 
     fun findByUserName(userName: String): List<UserLoanHistory>
 
+    fun findAllByStatus(status: UserLoanStatus): List<UserLoanHistory>
+
 }
